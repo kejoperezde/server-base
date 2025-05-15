@@ -1,8 +1,8 @@
 const Book = require("../models/book.model");
 
-exports.getBooks = (req, res) => {
+exports.getBooks = async (req, res) => {
   try {
-    const books = Book.find();
+    const books = await Book.find();
     return res.status(200).json({
       code: 200,
       data: books,
@@ -15,13 +15,13 @@ exports.getBooks = (req, res) => {
   }
 };
 
-exports.getBookById = (req, res) => {
+exports.getBookById = async (req, res) => {
   const { bookId } = req.params;
   try {
+    const book = await Book.findById(bookId);
     return res.status(200).json({
       code: 200,
-      message: `Consulta de libro con id`,
-      data: bookId,
+      data: book,
     });
   } catch (error) {
     return res.status(500).json({
@@ -31,19 +31,21 @@ exports.getBookById = (req, res) => {
   }
 };
 
-exports.createBook = (req, res) => {
-  const { title, author, year } = req.body;
-  console.log(req.body);
+exports.createBook = async (req, res) => {
+  const { title, author, isbn, price, stokc } = req.body;
 
   try {
+    const book = new Book({
+      title,
+      author,
+      isbn,
+      price,
+      stokc,
+    });
     return res.status(201).json({
       code: 201,
       message: "Libro creado",
-      data: {
-        title,
-        author,
-        year,
-      },
+      data: book,
     });
   } catch (error) {
     return res.status(500).json({
